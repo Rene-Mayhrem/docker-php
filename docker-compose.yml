@@ -1,0 +1,38 @@
+version: "3"
+services:
+  db:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      MYSQL_DATABASE: db
+      MYSQL_PASSWORD: rene
+      MYSQL_ROOT_PASSWORD: pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./../backend/mysql-db:/var/lib/mysql
+    networks:
+      - default
+    restart: always
+  web:
+    image: my-image-php
+    build: .
+    container_name: web
+    ports:
+      - "80:80"
+    volumes:
+      - ./backend/src:/var/www/html
+    links:
+      - db
+    networks:
+      - default
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - db:db
+    ports:
+      - "8000:80"
+    environment:
+      MYSQL_USER: root
+      MYSQL_PASSWORD: test
+      MYSQL_ROOT_PASSWORD: pass
